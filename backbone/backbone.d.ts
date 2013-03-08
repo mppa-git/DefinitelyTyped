@@ -57,7 +57,7 @@ declare module Backbone {
           * registered callbacks ... or be more precise by telling it to remove just the events it's
           * listening to on a specific object, or a specific event, or just a specific callback.
          */
-        stopListening(other: any?, eventName?: string, callback?: (...args:any[]) => void): any;
+        stopListening(other?: any, eventName?: string, callback?: (...args:any[]) => void): any;
     }
 
     export class ModelBase extends Events {
