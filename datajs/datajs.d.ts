@@ -58,7 +58,7 @@ declare module datajs {
         qualifier?: string;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     /** A placeholder for the AnnotationsReference element type.
     
@@ -75,7 +75,7 @@ declare module datajs {
         referentialConstraint?: ReferentialConstraint;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface AssociationSet extends Documentable, Extensible {
         name?: string;
@@ -83,15 +83,15 @@ declare module datajs {
         end?: End[];
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface Binary extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Bool extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Collection extends Documentable, Extensible {
         string?: String[];
@@ -106,7 +106,7 @@ declare module datajs {
         time?: Time[];
         collection?: Collection[];
         record?: Record[];
-    };
+    }
 
     interface CollectionType extends Documentable, Extensible {
         elementType?: string;
@@ -123,7 +123,7 @@ declare module datajs {
         referenceType?: ReferenceType;
         rowType?: RowType;
         typeRef?: TypeRef;
-    };
+    }
 
     interface ComplexType extends Documentable, Extensible {
         name?: string;
@@ -132,32 +132,32 @@ declare module datajs {
         property?: Property[];
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface DateTime extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface DateTimeOffset extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Decimal extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface DefiningExpression extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Dependent extends Documentable, Extensible {
         role?: string;
         propertyRef?: PropertyRef[];
-    };
+    }
 
     interface Documentation extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface End extends Documentable, Extensible {
         type?: string;
@@ -165,7 +165,7 @@ declare module datajs {
         multiplicity?: string;
         entitySet?: string;
         onDelete?: OnDelete;
-    };
+    }
 
     interface EntityContainer extends Documentable, Extensible {
         name?: string;
@@ -175,14 +175,14 @@ declare module datajs {
         functionImport?: FunctionImport[];
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface EntitySet extends Documentable, Extensible {
         name?: string;
         entityType?: string;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface EntityType extends Documentable, Extensible {
         name?: string;
@@ -194,18 +194,18 @@ declare module datajs {
         navigationProperty?: NavigationProperty[];
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface EnumType extends Documentable, Extensible {
         name?: string;
         underlyingType?: string;
         isFlags?: string;
         member?: Member[];
-    };
+    }
 
     interface Float extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Function extends Documentable, Extensible {
         // The returnType property will be a string if it was set by an
@@ -218,7 +218,7 @@ declare module datajs {
         definingExpression?: DefiningExpression;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface FunctionImport extends Documentable, Extensible {
         // The returnType property will be a string if it was set by an
@@ -235,19 +235,19 @@ declare module datajs {
         parameter?: Parameter[];
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface Guid extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Int extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Key extends Documentable, Extensible {
         propertyRef?: PropertyRef[];
-    };
+    }
 
     interface LabeledElement extends Documentable, Extensible {
         name?: string;
@@ -266,12 +266,12 @@ declare module datajs {
         record?: Record;
         labeledElement?: LabeledElement;
         null?: Null;
-    };
+    }
 
     interface Member extends Documentable, Extensible {
         name?: string;
         value?: string;
-    };
+    }
 
     interface NavigationProperty extends Documentable, Extensible {
         name?: string;
@@ -281,18 +281,18 @@ declare module datajs {
         containsTarget?: string;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface Null extends Documentable, Extensible {
-    };
+    }
 
     interface OnDelete extends Documentable, Extensible {
         action?: string;
-    };
+    }
 
     interface Path extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Parameter extends Documentable, Extensible {
         name?: string;
@@ -314,12 +314,12 @@ declare module datajs {
         typeRef?: TypeRef;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface Principal extends Documentable, Extensible {
         role?: string;
         propertyRef?: PropertyRef[];
-    };
+    }
 
     interface Property extends Documentable, Extensible {
         name?: string;
@@ -340,11 +340,11 @@ declare module datajs {
         rowType?: RowType;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface PropertyRef extends Documentable, Extensible {
         name?: string;
-    };
+    }
 
     interface PropertyValue extends Documentable, Extensible {
         // There should be exactly one property.  It will be a string if it
@@ -368,7 +368,7 @@ declare module datajs {
         record?: Record;
         labeledElement?: LabeledElement;
         null?: Null;
-    };
+    }
 
     /** A placeholder for the Record element type.
     
@@ -390,12 +390,12 @@ declare module datajs {
 
     interface ReferenceType extends Documentable, Extensible {
         type?: string;
-    };
+    }
 
     interface ReferentialConstraint extends Documentable, Extensible {
         principal?: Principal;
         dependent?: Dependent;
-    };
+    }
 
     interface ReturnType extends Documentable, Extensible {
         returnType?: string;
@@ -404,15 +404,15 @@ declare module datajs {
         collectionType?: CollectionType;
         referenceType?: ReferenceType;
         rowType?: RowType;
-    };
+    }
 
     interface RowType extends Documentable, Extensible {
         property?: Property[];
-    };
+    }
 
     interface String extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface Schema extends Documentable, Extensible {
         namespace?: string;
@@ -425,17 +425,17 @@ declare module datajs {
         function?: Function[];
         valueTerm?: ValueTerm[];
         annotations?: Annotations[];
-    };
+    }
 
     interface Time extends Documentable, Extensible {
         text?: string;
-    };
+    }
 
     interface TypeAnnotation extends Documentable, Extensible {
         term?: string;
         qualifier?: string;
         propertyValue?: PropertyValue[];
-    };
+    }
 
     interface TypeRef extends Documentable, Extensible {
         type?: string;
@@ -448,12 +448,12 @@ declare module datajs {
         unicode?: string;
         collation?: string;
         SRID?: string;
-    };
+    }
 
     interface Using extends Documentable, Extensible {
         namespace?: string;
         alias?: string;
-    };
+    }
 
     interface ValueAnnotation extends Documentable, Extensible {
         // There should be exactly one property aside from term.  It will be a
@@ -478,25 +478,25 @@ declare module datajs {
         record?: Record;
         labeledElement?: LabeledElement;
         null?: Null;
-    };
+    }
 
     interface ValueTerm extends Documentable, Extensible {
         name?: string;
         type?: string;
         typeAnnotation?: TypeAnnotation[];
         valueAnnotation?: ValueAnnotation[];
-    };
+    }
 
     interface Edmx extends Documentable, Extensible {
         version?: string;
         dataServices?: DataServices;
         reference?: Reference[];
         annotationsReference?: AnnotationsReference[];
-    };
+    }
 
     interface DataServices extends Documentable, Extensible {
         schema?: Schema[];
-    };
+    }
 
 }
 
@@ -516,7 +516,7 @@ declare module OData {
     /** Object with an 'abort' method for the operation. */
     interface Abortable {
         abort(): void;
-    };
+    }
 
     interface Handler {
     }
@@ -529,7 +529,7 @@ declare module OData {
         @param error Error callback with an error object.
         */
         request(request: HttpRequest, success?: (data, response) => void , error?: (error) => void ): Abortable;
-    };
+    }
 
     interface HttpRequest {
         /** object that contains HTTP headers as name value pairs */
@@ -549,10 +549,10 @@ declare module OData {
 
         /** Password to send for BASIC authentication. */
         password?: string;
-    };
+    }
 
     interface HttpResponse {
-    };
+    }
 
     /** Default callback function for APIs that succeed. */
     export function defaultSuccess(data, response: HttpResponse): void;
