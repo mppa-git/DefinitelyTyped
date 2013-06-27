@@ -84,7 +84,7 @@ declare class Enumerator {
     constructor (o: any);
 }
 declare function setTimeout(callback: () =>void , ms?: number);
-declare var require: any;
+//declare var require: any;
 declare module process {
     export var argv: string[];
     export var platform: string;
@@ -302,7 +302,7 @@ var IO = (function() {
             getExecutingFilePath: function () {
                 return WScript.ScriptFullName;
             },
-            quit: function (exitCode? : number = 0) {
+            quit: function (exitCode : number = 0) {
                 try {
                     WScript.Quit(exitCode);
                 } catch (e) {

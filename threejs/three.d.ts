@@ -5,7 +5,7 @@
 
 interface WebGLRenderingContext {}
 
-module THREE {
+declare module THREE {
     export var REVISION: string;
 
     // GL STATE CONSTANTS
@@ -1046,14 +1046,14 @@ module THREE {
          * Each UV layer is an array of UV matching order and number of faces.
          * To signal an update in this array, Geometry.uvsNeedUpdate needs to be set to true.
          */
-        faceUvs: Vector2[];
+        faceUvs: Vector2[][];
 
         /**
          * Array of face UV layers.
          * Each UV layer is an array of UV matching order and number of vertices in faces.
          * To signal an update in this array, Geometry.uvsNeedUpdate needs to be set to true.
          */
-        faceVertexUvs: Vector2[][];
+        faceVertexUvs: Vector2[][][];
 
         /**
          * Array of morph targets. Each morph target is a Javascript object:
@@ -1277,7 +1277,7 @@ module THREE {
         degToRad(degrees: number): number;
 
         radToDeg(radians: number): number;
-    };
+    }
 
     /**
      *
@@ -1997,8 +1997,7 @@ module THREE {
 
     export class Raycaster {
         constructor(origin?: Vector3, direction?: Vector3, near?: number, far?: number);
-        origin: Vector3;
-        direction: Vector3;
+        ray: Ray;
         near: number;
         far: number;
         precision: number;
@@ -5778,7 +5777,8 @@ module THREE {
         constructor(texture?: Texture, size?: number, distance?: number, blending?: Blending, color?: Color);
         lensFlares: LensFlareProperty[];
         positionScreen: Vector3;
-        customUpdateCallback: (object:LensFlare) => void;
+        customUpdateCallback: (object: LensFlare) => void;
+        add(object: Object3D): void;
         add(texture?: Texture, size?: number, distance?: number, blending?: Blending, color?: Color, opacity?: number): void;
         updateLensFlares(): void;
     }
@@ -5896,6 +5896,3 @@ module THREE {
         depthRGBA: Shader;
     };
 }
-
-
-

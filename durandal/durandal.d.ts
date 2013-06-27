@@ -18,11 +18,11 @@ declare module "durandal/system" {
     /**
       * Call this function to enable or disable Durandal's debug mode. Calling it with no parameters will return true if the framework is currently in debug mode, false otherwise.
       */
-    export var debug: (debug?: bool) => bool;
+    export var debug: (debug?: boolean) => boolean;
     /**
       * Checks if the obj is an array
       */
-    export var isArray: (obj: any) => bool;
+    export var isArray: (obj: any) => boolean;
     /**
       * Logs data to the console. Pass any number of parameters to be logged. Log output is not processed if the framework is not running in debug mode.
       */
@@ -64,7 +64,7 @@ declare module "durandal/app" {
       * @param transition If you have a splash screen, you may want to specify an optional transition to animate from the splash to your main shell. 
       * @param applicationHost parameter is optional. If provided it should be an element id for the node into which the UI should be composed. If it is not provided the default is to look for an element with an id of "applicationHost".
       */
-    export var setRoot: (root: any, transition: string, applicationHost: string) => void;
+    export var setRoot: (root: any, transition?: string, applicationHost?: string) => void;
     /**
       * If you intend to run on mobile, you should also call app.adaptToDevice() before setting the root.
       */
@@ -72,7 +72,7 @@ declare module "durandal/app" {
     /**
       * The events parameter is a space delimited string containing one or more event identifiers. When one of these events is triggered, the callback is called and passed the event data provided by the trigger. The special events value of "all" binds all events on the object to the callback. If a context is provided, it will be bound to this for the callback. If the callback is omitted, then a promise-like object is returned from on. This object represents a subscription and has a then function used to register callbacks.
       */
-    export var on: (events: string, callback: Function, context?) => any;
+    export var on: (events: string, callback: Function, context?) => IEventSubscription;
     /**
       * Unwires callbacks from events. If no context is specified, all callbacks with different contexts will be removed. If no callback is specified, all callbacks for the event will be removed. If no event is specified, all event callbacks on the object will be removed.
       */
@@ -91,7 +91,7 @@ declare module "durandal/composition" {
     /**
       * sets activate: true on every compose binding
       */
-    export var activateDuringComposition: bool;
+    export var activateDuringComposition: boolean;
     /**
       * changes the convention for finding where transitions are located
       */
@@ -161,7 +161,7 @@ declare module "durandal/modalDialog" {
     /**
       * This is a helper function which will tell you if any modals are currently open.
       */
-    export var isModalOpen: () => bool;
+    export var isModalOpen: () => boolean;
     /**
       * You may wish to customize modal displays or add additional contexts in order to display modals in different ways. To alter the default context, you would acquire it by calling getContext() and then alter it's pipeline. If you don't provide a value for name it returns the default context.
       */
@@ -192,7 +192,7 @@ declare module "durandal/viewEngine" {
     /**
       * Returns true if the potential string is a url for a view, according to the view engine.
       */
-    export var isViewUrl: (url: string) => bool;
+    export var isViewUrl: (url: string) => boolean;
     /**
       * Converts a view url into a view id.
       */
@@ -267,15 +267,15 @@ interface IViewModelDefaults {
     /**
       * When the activator attempts to activate an item as described below, it will only activate the new item, by default, if it is a different instance than the current. Overwrite this function to change that behavior.
       */
-    areSameItem(currentItem, newItem, activationData): bool;
+    areSameItem(currentItem, newItem, activationData): boolean;
     /**
       * default is true
       */
-    closeOnDeactivate: bool;
+    closeOnDeactivate: boolean;
     /**
       * Interprets values returned from guard methods like canActivate and canDeactivate by transforming them into bools. The default implementation translates string values "Yes" and "Ok" as true...and all other string values as false. Non string values evaluate according to the truthy/falsey values of JavaScript. Replace this function with your own to expand or set up different values. This transformation is used by the activator internally and allows it to work smoothly in the common scenario where a deactivated item needs to show a message box to prompt the user before closing. Since the message box returns a promise that resolves to the button option the user selected, it can be automatically processed as part of the activator's guard check.
       */
-    interpretResponse(value: any): bool;
+    interpretResponse(value: any): boolean;
     /**
       * called before activating a module
       */
@@ -284,7 +284,7 @@ interface IViewModelDefaults {
       * called after deactivating a module
       */
     afterDeactivate(): any;
-};
+}
 
 interface IDurandalViewModelActiveItem {
     /**
@@ -298,7 +298,7 @@ interface IDurandalViewModelActiveItem {
     /**
       * This observable is set internally by the activator during the activation process. It can be used to determine if an activation is currently happening.
       */
-    isActivating(val?: bool): bool;
+    isActivating(val?: boolean): boolean;
     /**
       * Pass a specific item as well as an indication of whether it should be closed, and this function will tell you the answer.
       */
@@ -339,43 +339,93 @@ interface IDurandalViewModelActiveItem {
       * Sets up a collection representing a pool of objects which the activator will activate. See below for details. Activators without an item bool always close their values on deactivate. Activators with an items pool only deactivate, but do not close them.
       */
     forItems(items): IDurandalViewModelActiveItem;
-};
+}
 
+/**
+  * A router plugin, currently based on SammyJS. The router abstracts away the core configuration of Sammy and re-interprets it in terms of durandal's composition and activation mechanism. To use the router, you must require it, configure it and bind it in the UI.
+  * Documentation at http://durandaljs.com/documentation/Router/
+  */
 declare module "durandal/plugins/router" {
-    interface routeInfo {
+    /**
+      * Parameters to the map function. or information on route url patterns, see the SammyJS documentation. But 
+      * basically, you can have simple routes my/route/, parameterized routes customers/:id or Regex routes. If you 
+      * have a parameter in your route, then the activation data passed to your module's activate function will have a 
+      * property for every parameter in the route (rather than the splat array, which is only present for automapped 
+      * routes).
+      */
+    interface IRouteInfo {
         url: string;
         moduleId: string;
         name: string;
-        visible: bool;
-    };
+        /** used to set the document title */
+        caption: string;
+        /** determines whether or not to include it in the router's visibleRoutes array for easy navigation UI binding */
+        visible: boolean;
+        settings: Object;
+        hash: string;
+        /** only present on visible routes to track if they are active in the nav */
+        isActive?: KnockoutComputed<boolean>;
+    }
+    /**
+      * Parameters to the map function. e only required parameter is url the rest can be derived. The derivation 
+      * happens by stripping parameters from the url and casing where appropriate. You can always explicitly provide 
+      * url, name, moduleId, caption, settings, hash and visible. In 99% of situations, you should not need to provide 
+      * hash; it's just there to simplify databinding for you. Most of the time you may want to teach the router how 
+      * to properly derive the moduleId and name based on a url. If you want to do that, overwrite.
+      */
+    interface IRouteInfoParameters {
+        /** your url pattern. The only required parameter */
+        url: string;
+        /** if not supplied, router.convertRouteToName derives it */
+        moduleId?: string;
+        /** if not supplied, router.convertRouteToModuleId derives it */
+        name?: string;
+        /** used to set the document title */
+        caption?: string;
+        /** determines whether or not to include it in the router's visibleRoutes array for easy navigation UI binding */
+        visible?: boolean;
+        settings?: Object;
+    }
     /**
       * observable that is called when the router is ready
       */
-    export var ready: KnockoutObservableBool;
+    export var ready: KnockoutObservable<boolean>;
     /**
       * An observable array containing all route info objects.
       */
-    export var allRoutes: KnockoutObservableArray;
+    export var allRoutes: KnockoutObservableArray<IRouteInfo>;
     /**
       * An observable array containing route info objects configured with visible:true (or by calling the mapNav function).
       */
-    export var visibleRoutes: KnockoutObservableArray;
+    export var visibleRoutes: KnockoutObservableArray<IRouteInfo>;
     /**
       * An observable boolean which is true while navigation is in process; false otherwise.
       */
-    export var isNavigating: KnockoutObservableBool;
+    export var isNavigating: KnockoutObservable<boolean>;
     /**
       * An observable whose value is the currently active item/module/page.
       */
     export var activeItem: IDurandalViewModelActiveItem;
     /**
+      * An observable whose value is the currently active route.
+      */
+    export var activeRoute: KnockoutObservable<IRouteInfo>;
+    /**
       * called after an a new module is composed
       */
     export var afterCompose: () => void;
     /**
+      * Returns the activatable instance from the supplied module.
+      */
+    export var getActivatableInstance: (routeInfo: IRouteInfo, params: any, module: any) => any;
+    /**
       * Causes the router to move backwards in page history.
       */
     export var navigateBack: () => void;
+    /**
+      * Use router default convention.
+      */
+    export var useConvention: () => void;
     /**
       * Causes the router to navigate to a specific url.
       */
@@ -399,7 +449,11 @@ declare module "durandal/plugins/router" {
     /**
       * This should not normally be overwritten. But advanced users can override this to completely transform the developer's routeInfo input into the final version used to configure the router.
       */
-    export var prepareRouteInfo: (info: routeInfo) => void;
+    export var prepareRouteInfo: (info: IRouteInfo) => void;
+    /**
+      * This should not normally be overwritten. But advanced users can override this to completely transform the developer's routeInfo input into the final version used to configure the router.
+      */
+    export var handleInvalidRoute: (route: IRouteInfo, parameters: any) => void;
     /**
       * Once the router is required, you can call router.mapAuto(). This is the most basic configuration option. When you call this function (with no parameters) it tells the router to directly correlate route parameters to module names in the viewmodels folder.
       */
@@ -407,20 +461,67 @@ declare module "durandal/plugins/router" {
     /**
       * Works the same as mapRoute except that routes are automatically added to the visibleRoutes array.
       */
-    export var mapNav: (url: string, moduleId: string, name: string) => routeInfo;
+    export var mapNav: (url: string, moduleId?: string, name?: string) => IRouteInfo;
     /**
       * You can pass a single routeInfo to this function, or you can pass the basic configuration parameters. url is your url pattern, moduleId is the module path this pattern will map to, name is used as the document title and visible determines whether or not to include it in the router's visibleRoutes array for easy navigation UI binding.
       */
-    export var mapRoute: (url: string, moduleId: string, name: string, visible: bool) => routeInfo;
+    export var mapRoute: {
+        (route: IRouteInfoParameters): IRouteInfo;
+        (url: string, moduleId?: string, name?: string, visible?: boolean): IRouteInfo;
+    }
     /**
       * This function takes an array of routeInfo objects or a single routeInfo object and uses it to configure the router. The finalized routeInfo (or array of infos) is returned.
       */
     export var map: {
-        (routeOrRouteArray: string): void;
-        (routeOrRouteArray: string[]): void;
-    };
+        (routeOrRouteArray: IRouteInfoParameters): IRouteInfo;
+        (routeOrRouteArray: IRouteInfoParameters[]): IRouteInfo[];
+    }
     /**
       * After you've configured the router, you need to activate it. This is usually done in your shell. The activate function of the router returns a promise that resolves when the router is ready to start. To use the router, you should add an activate function to your shell and return the result from that. The application startup infrastructure of Durandal will detect your shell's activate function and call it at the appropriate time, waiting for it's promise to resolve. This allows Durandal to properly orchestrate the timing of composition and databinding along with animations and splash screen display.
       */
     export var activate: (defaultRoute: string) => JQueryPromise;
+    /**
+      * Before any route is activated, the guardRoute funtion is called. You can plug into this function to add custom logic to allow, deny or redirect based on the requested route. To allow, return true. To deny, return false. To redirect, return a string with the hash or url. You may also return a promise for any of these values.
+      */
+    export var guardRoute: (routeInfo: IRouteInfo, params: any, instance: any) => any
 }
+
+declare module "durandal/widget" {
+    /**
+      * Use this function to create a widget through code. The element should reference a dom element that the widget will be created on. The settings can be either a string or an object. If it's a string, it should specify the widget kind. If it's an object, it represents settings that will be passed along to the widget. This object should have a kind property used to identify the widget kind to create. Optionally, you can specify a bindingContext of which you want the widget's binding context to be created as a child.
+      */
+    export function create(element: any, settings: any, bindingContext?: any);
+    /**
+      * By default, you can create widgets in html by using the widget binding extension. Calling registerKind allows you to easily create a custom binding handler for your widget kind. Without calling registerKind you might declare a widget binding for an expander control with
+      */
+    export function registerKind(kind: string);
+    /**
+      * Use this to re-map a widget kind identifier to a new viewId or moduleId representing the 'skin' and 'behavior' respectively.
+      */
+    export function mapKind(kind: string, viewId?: string, moduleId?: string);
+    /**
+      * Developers implementing widgets may wish to use this function to acquire the resolved template parts for a widget. Pass a single dom element or an array of elements and get back an object keyed by part name whose values are the dom elements corresponding to each part in that scope.
+      */
+    export function getParts(elements: any): any;
+    /**
+      * (overrridable) Replace this to re-interpret the kind id as a module path. By default it does a lookup for any custom maps added through mapKind and then falls back to the path "durandal/widgets/{kind}/controller".
+      */
+    export function convertKindToModuleId(kind): string;
+    /**
+      * (overridable) Replace this to re-interpret the kind id as a view id. The default does a lookup for any custom maps added through mapKind and then falls back to the path "durandal/widgets/{kind}/view".
+      */
+    export function convertKindToViewId(kind): string;
+}
+
+interface IEventSubscription
+{
+    /**
+      * This function adding callback to event subscription
+      */
+    then(thenCallback: any): void;
+
+    /**
+      * This function removing current subscription from event handlers
+      */
+     off(): void;
+ }

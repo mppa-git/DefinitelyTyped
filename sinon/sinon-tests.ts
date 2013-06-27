@@ -69,9 +69,22 @@ function testSix() {
 	stub.restore();
 }
 
+function testSeven() {
+	var obj = { functionToTest : function () { } };
+	var mockObj = sinon.mock(obj);
+	obj.functionToTest();
+	mockObj.expects('functionToTest').once();
+}
+
+function testEight() {
+    var combinedMatcher = sinon.match.typeOf("object").and(sinon.match.has("pages"));
+}
+
 testOne();
 testTwo();
 testThree();
 testFour();
 testFive();
 testSix();
+testSeven();
+testEight();

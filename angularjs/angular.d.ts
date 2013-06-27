@@ -11,7 +11,7 @@ declare var angular: ng.IAngularStatic;
 ///////////////////////////////////////////////////////////////////////////////
 // ng module (angular.js)
 ///////////////////////////////////////////////////////////////////////////////
-module ng {
+declare module ng {
 
     // All service providers extend this interface
     interface IServiceProvider {
@@ -72,6 +72,9 @@ module ng {
     // see http://docs.angularjs.org/api/angular.Module
     ///////////////////////////////////////////////////////////////////////////
     interface IModule {
+        animation(name: string, animationFactory: Function): IModule;
+        animation(name: string, inlineAnnotadedFunction: any[]): IModule;
+        animation(object: Object): IModule;
         /** configure existing services.  
 		Use this method to register work which needs to be performed on module loading
 		 */
@@ -81,21 +84,29 @@ module ng {
 		 */
         config(inlineAnnotadedFunction: any[]): IModule;
         constant(name: string, value: any): IModule;
+        constant(object: Object): IModule;
         controller(name: string, controllerConstructor: Function): IModule;
         controller(name: string, inlineAnnotadedConstructor: any[]): IModule;
-        directive(name: string, directiveFactory: Function): IModule;
+        controller(object : Object): IModule;
+        directive(name: string, directiveFactory: (...params:any[])=> IDirective): IModule;
         directive(name: string, inlineAnnotadedFunction: any[]): IModule;
+        directive(object: Object): IModule;        
         factory(name: string, serviceFactoryFunction: Function): IModule;
         factory(name: string, inlineAnnotadedFunction: any[]): IModule;
+        factory(object: Object): IModule;
         filter(name: string, filterFactoryFunction: Function): IModule;
         filter(name: string, inlineAnnotadedFunction: any[]): IModule;
+        filter(object: Object): IModule;
         provider(name: string, serviceProviderConstructor: Function): IModule;
         provider(name: string, inlineAnnotadedConstructor: any[]): IModule;
+        provider(object: Object): IModule;
         run(initializationFunction: Function): IModule;
         run(inlineAnnotadedFunction: any[]): IModule;
         service(name: string, serviceConstructor: Function): IModule;
         service(name: string, inlineAnnotadedConstructor: any[]): IModule;
+        service(object: Object): IModule;
         value(name: string, value: any): IModule;
+        value(object: Object): IModule;
 
         // Properties
         name: string;
@@ -162,7 +173,7 @@ module ng {
     // see http://docs.angularjs.org/api/ng.$rootScope.Scope
     ///////////////////////////////////////////////////////////////////////////
     interface IScope {
-        // Documentation says exp is optional, but actual implementaton counts on it
+        $apply(): any;
         $apply(exp: string): any;
         $apply(exp: (scope: IScope) => any): any;
 
@@ -385,20 +396,13 @@ module ng {
         when(value: any): IPromise;
     }
 
-    interface PromiseCallbackArg {
-        data?: any;
-        status?: number;
-        headers?: (headerName: string) => string;
-        config?: IRequestConfig;
-    }
-
     interface IPromise {
-        then(successCallback: (response: PromiseCallbackArg) => any, errorCallback?: (response: PromiseCallbackArg) => any): IPromise;
+        then(successCallback: (promiseValue: any) => any, errorCallback?: (reason: any) => any): IPromise;
     }
 
     interface IDeferred {
         resolve(value?: any): void;
-        reject(reason?: string): void;
+        reject(reason?: any): void;
         promise: IPromise;
     }
 
@@ -524,9 +528,17 @@ module ng {
         transformResponse?: any;
     }
 
+    interface IHttpPromiseCallbackArg {
+        data?: any;
+        status?: number;
+        headers?: (headerName: string) => string;
+        config?: IRequestConfig;
+    }
+
     interface IHttpPromise extends IPromise {
         success(callback: (data: any, status: number, headers: (headerName: string) => string, config: IRequestConfig) => any): IHttpPromise;
         error(callback: (data: any, status: number, headers: (headerName: string) => string, config: IRequestConfig) => any): IHttpPromise;
+        then(successCallback: (response: IHttpPromiseCallbackArg) => any, errorCallback?: (response: IHttpPromiseCallbackArg) => any): IPromise;
     }
 
     interface IHttpProvider extends IServiceProvider {
@@ -620,6 +632,25 @@ module ng {
         otherwise(params: any): IRouteProvider;
         when(path: string, route: IRoute): IRouteProvider;
     }
+    
+    ///////////////////////////////////////////////////////////////////////////
+    // Directive
+    // see http://docs.angularjs.org/api/ng.$compileProvider#directive
+    // and http://docs.angularjs.org/guide/directive
+    ///////////////////////////////////////////////////////////////////////////
+
+    interface IDirective{
+        priority?: number;
+        template?: string;
+        templateUrl?: string;
+        replace?: bool;
+        transclude?: bool;
+        restrict?: string;
+        scope?: any;
+        link?: Function;
+        compile?: Function;
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // AUTO module (angular.js)

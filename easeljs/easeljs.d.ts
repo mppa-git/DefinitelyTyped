@@ -18,7 +18,7 @@ interface NativeMouseEvent extends MouseEvent {
 
 }
 
-module createjs {
+declare module createjs {
     // :: base classes :: //
 
     export class DisplayObject {
@@ -155,13 +155,15 @@ module createjs {
         spriteSheet: SpriteSheet;
 
         // methods
-        constructor (spriteSheet: SpriteSheet);
+        constructor(spriteSheet: SpriteSheet);
         advance(): void;
         cache(): void;
         clone(): BitmapAnimation;
         getBounds(): Rectangle;
         gotoAndPlay(frameOrAnimation: string): void;
         gotoAndPlay(frameOrAnimation: number): void;
+        gotoAndStop(frameOrAnimation: string): void;
+        gotoAndStop (frameOrAnimation: number): void;
         play(): void;
         stop(): void;
         updateCache(): void;
@@ -430,6 +432,20 @@ module createjs {
         clone(): MouseEvent;
         toString(): string;
 
+        // EventDispatcher mixins
+        addEventListener(type: string, listener: (eventObj: Object) => bool): Function;
+        addEventListener(type: string, listener: (eventObj: Object) => void ): Function;
+        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => bool; }): Object;
+        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }): Object;
+        removeEventListener(type: string, listener: (eventObj: Object) => bool): void;
+        removeEventListener(type: string, listener: (eventObj: Object) => void ): void;
+        removeEventListener(type: string, listener: { handleEvent: (eventObj: Object) => bool; }): void;
+        removeEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }): void;
+        removeAllEventListeners(type: string): void;
+        dispatchEvent(eventObj: string, target: Object): bool;
+        dispatchEvent(eventObj: Object, target: Object): bool;
+        hasEventListener(type: string): bool;
+
         // events
         onMouseMove: (event: MouseEvent) => any;
         onMouseUp: (event: MouseEvent) => any;
@@ -567,7 +583,8 @@ module createjs {
 
     export class SpriteSheetUtils {
         static addFlippedFrames(spriteSheet: SpriteSheet, horizontal?: bool, vertical?: bool, both?: bool): void;
-        static extractFrame(spriteSheet: HTMLImageElement, frame: number): HTMLImageElement;
+        static extractFrame(spriteSheet: SpriteSheet, frame: number): HTMLImageElement;
+        static extractFrame(spriteSheet: SpriteSheet, animationName: string): HTMLImageElement;
         static flip(spriteSheet: HTMLImageElement, flipData: Object): void;
         static mergeAlpha(rgbImage: HTMLImageElement, alphaImage: HTMLImageElement, canvas?: HTMLCanvasElement): HTMLCanvasElement;
     }
@@ -654,6 +671,17 @@ module createjs {
 
         // events
         tick: (timeElapsed: number) => any;
+    }
+    
+     export class TickerEvent {
+
+        // properties
+        target: Object;
+        type: string;
+        paused: bool;
+        delta: number;
+        time: number;
+        runTime : number;
     }
 
 
